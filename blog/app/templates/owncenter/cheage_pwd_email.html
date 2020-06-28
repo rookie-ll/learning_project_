@@ -1,0 +1,44 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    修改博客
+{% endblock %}
+{% from 'bootstrap/wtf.html' import quick_form %}
+{% block scripts %}
+    {{ super() }}
+    <script src="//cdn.ckeditor.com/4.4.6/standard/ckeditor.js"></script>
+{% endblock %}
+{% block page_content %}
+    <h2 class="page-header">修改密码&邮箱</h2>
+    <form action="" method="post">
+        {{ form.password.label() }}
+        {{ form.password(class='form-control') }}
+        {% for err in form.password.errors %}
+            <p style="color:red;">{{ err }}</p>
+        {% endfor %}
+        <br>
+        <br/>
+        {{ form.new_pwd.label() }}
+        {{ form.new_pwd(class='form-control') }}
+        {% for err in form.new_pwd.errors %}
+            <p style="color:red;">{{ err }}</p>
+        {% endfor %}
+
+        <br>
+        {{ form.email.label(style='font-size:16px;') }}
+        {{ form.email(class='form-control') }}
+        {% for err in form.email.errors %}
+            <p style="color:red;">{{ err }}</p>
+        {% endfor %}
+        <br>
+        {{ form.new_email.label(style='font-size:16px;') }}
+        {{ form.new_email(class='form-control') }}
+        {% for err in form.new_email.errors %}
+            <p style="color:red;">{{ err }}</p>
+        {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-success">更新</button>
+    </form>
+{% endblock %}
+
+{% block page_right %}
+{% endblock %}

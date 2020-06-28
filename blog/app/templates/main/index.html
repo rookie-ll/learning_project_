@@ -1,0 +1,68 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    首页
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style type="text/css">
+        @media (min-width: 992px) {
+            .content {
+                margin-top: 90px !important;
+            }
+        }
+
+        .container .article-list a {
+            color: #337ab7;
+        }
+
+        .carousel-control {
+            width: 10%;
+        }
+
+        .carousel-indicators {
+            bottom: 5px;
+        }
+
+        #mobileclassify {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+
+{% endblock %}
+    {% block page_left %}
+        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12 ">
+             {% for p in posts %}
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 article-list box">
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 hidden-xs thumb">
+                    <img src="{{ url_for('static',filename='upload/m_'+p.user.icon) }}" class="img-responsive">
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 detail">
+                    <div class="title">
+                        <a href="{{ url_for("posts.posts_detail",pid=p.id) }}">{{ p.title }}
+                        <span style="float:right;color:#ccc;font-size:14px;">{{ moment(p.timestamp).fromNow() }}</span></a>
+                    </div>
+                    <div class="info">作者：{{ p.user.username }}&nbsp;&nbsp;&nbsp;类别：{{ p.categories.name }}&nbsp;&nbsp;&nbsp;日期：{{ p.timestamp }}&nbsp;&nbsp;&nbsp;阅读：{{ p.visit }} 次&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <div class="intro">{{ p.article|striptags|showEllipsis }}</div>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 article-list-border">
+                <div class="article-border"></div>
+            </div>
+            {% endfor %}
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 paginate box">
+                {#  分页的样式  #}
+                {% from 'common/page_macro.html' import page %}
+                {{ page(pagination,'main.index') }}
+            </div>
+
+        </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

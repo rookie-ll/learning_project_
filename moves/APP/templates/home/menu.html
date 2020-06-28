@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+    <title>微电影</title>
+    <link rel="shortcut icon" href="{{ url_for("static",filename="base/images/logo.png") }}">
+    <link rel="stylesheet" href="{{ url_for("static",filename="base/css/bootstrap.min.css")}}">
+    <link rel="stylesheet" href="{{ url_for("static",filename="base/css/bootstrap-movie.css")}}">
+    <link rel="stylesheet" href="{{ url_for("static",filename="base/css/animate.css")}}">
+    <style>
+        .navbar-brand > img {
+            display: inline;
+        }
+
+    </style>
+    <style>
+        .media {
+            padding: 3px;
+            border: 1px solid #ccc
+        }
+
+    </style>
+</head>
+<body>
+<div class="col-md-3">
+        <div class="list-group">
+            <a id="m-1" href="{{ url_for("home.user") }}" class="list-group-item">
+                <span class="glyphicon glyphicon-user"></span>&nbsp;会员中心
+            </a>
+             <a id="m-2" href="{{ url_for("home.pwd")}}" class="list-group-item">
+                <span class="glyphicon glyphicon-lock"></span>&nbsp;修改密码
+            </a>
+            <a id="m-3" href="{{ url_for("home.comments",page=1)}}" class="list-group-item">
+                <span class="glyphicon glyphicon-comment"></span>&nbsp;评论记录
+            </a>
+            <a id="m-4" href="{{ url_for("home.loginlog",page=1)}}" class="list-group-item">
+                <span class="glyphicon glyphicon-calendar"></span>&nbsp;登录日志
+            </a>
+            <a id="m-5" href="{{ url_for("home.moviecol",id=session["user_id"],page=1)}}" class="list-group-item">
+                <span class="glyphicon glyphicon-heart"></span>&nbsp;收藏电影
+            </a>
+        </div>
+    </div>
+<script src="{{ url_for("static",filename="base/js/jquery.min.js")}}"></script>
+<script src="{{ url_for("static",filename="base/js/bootstrap.min.js")}}"></script>
+<script src="{{ url_for("static",filename="base/js/jquery.singlePageNav.min.js")}}"></script>
+<script src="{{ url_for("static",filename="base/js/wow.min.js")}}"></script>
+<script src="{{ url_for("static",filename="lazyload/jquery.lazyload.min.js")}}"></script>
+<script src="//cdn.bootcss.com/holder/2.9.4/holder.min.js"></script>
+<script>
+    $(function () {
+        new WOW().init();
+    })
+
+</script>
+<script>
+    $(document).ready(function () {
+        $("img.lazy").lazyload({
+            effect: "fadeIn"
+        });
+    });
+
+</script>
+</body>
+</html>

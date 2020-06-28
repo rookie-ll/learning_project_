@@ -1,0 +1,25 @@
+{% macro render_page(page,url) %}
+    {% if page %}
+        <li><a href="{{ url_for(url,page=1) }}">首页</a></li>
+        {% if page.has_prev %}
+            <li><a href="{{ url_for(url,page=page.prev_num) }}">上一页</a></li>
+        {% else %}
+            <li><a class="disabled" href="#">上一页</a></li>
+        {% endif %}
+        {% for foo in page.iter_pages() %}
+            {% if foo==page.page %}
+                <li><a class="active" href="#">{{ foo }}</a></li>
+            {% else %}
+                <li><a href="{{ url_for(url,page=foo) }}">{{ foo }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+
+        {% if page.has_next %}
+            <li><a href="{{ url_for(url,page=page.next_num) }}">下一页</a></li>
+        {% else %}
+            <li><a class="disabled" href="#">下一页</a></li>
+        {% endif %}
+        <li><a href="{{ url_for(url,page=page.pages) }}">尾页</a></li>
+    {% endif %}
+{% endmacro %}

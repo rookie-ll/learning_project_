@@ -1,0 +1,30 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    搜索...
+{% endblock %}
+{% block page_content %}
+    {#  博客内容的展示  #}
+    <div class="page-header"><h2>搜索包含<span style="color:red;">“{{ keyword }}”</span>博客的结果为...</h2></div>
+    {% for p in posts %}
+        <div class="media">
+            <a href="{{ url_for('posts.posts_detail',pid=p.id,_external=True) }}"
+               style="color:#000;text-decoration: none">
+                <div class="media-left media-middle">
+                    <img class="media-object" src="{{ url_for('static',filename='upload/s_'+p.user.icon) }}" alt="..."
+                         width="100" style="border-radius: 5px;border-top:2px solid #ccc;border-right:2px solid #ccc;">
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading" style="font-weight: bold;">{{ p.title }} <span
+                            style="float:right;color:#ccc;font-size:14px;">{{ moment(p.timestamp).fromNow() }}</span>
+                    </h4>
+                    {{ p.article|striptags|showEllipsis }}
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+    {#  分页的样式  #}
+    {% from 'common/page_macro.html' import page %}
+    {{ page(pagination,'posts.search',keyword=keyword) }}
+{% endblock %}
+{% block page_right %}
+{% endblock %}

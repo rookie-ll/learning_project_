@@ -1,0 +1,89 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    博客管理
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+    <style>
+    td a{
+        color: black;
+    }
+    </style>
+{% endblock %}
+{% block page_content %}
+    <p>
+    <h2 class="page-header">博客管理</h2>
+    <form class="form-inline definewidth m20" action="#" method="get">
+        博客名称：
+        <input type="text" name="username" id="username" class="abc input-default" placeholder="" value="">&nbsp;&nbsp;
+        <button type="submit" class="btn btn-primary">查询</button>
+        &nbsp;&nbsp;
+        <button type="button" class="btn btn-success" id="addnew" onclick="window.location.href={{ url_for('posts.send_posts') }}">新增博客</button>
+    </form>
+    <table class="table table-bordered table-hover definewidth m10">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>标题</th>
+            <th>博客内容</th>
+            <th>浏览量</th>
+            <th>是否所有人可见</th>
+            <th>发表时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        {% for row in posts %}
+        <tr>
+            <td>{{ loop.revindex }}</td>
+            <td>{{ row.title }}</td>
+            <td>{{ row.article|striptags|showEllipsis(20) }}</td>
+            <td>{{ row.visit }}次</td>
+            <td>
+                {% if row.state %}
+                    仅自己课件
+                {% else %}
+                    所有人可见
+                {% endif %}
+            </td>
+            <td>{{ moment(row.timestamp).format('YYYY-MM-DD H:m:s') }}</td>
+            <td>
+                <a href="{{ url_for('owncenter.edit_posts',pid=row.id) }}" target="_blank">编辑</a> |
+                <a href="{{ url_for('owncenter.del_posts',pid=row.id) }}">删除</a> |
+                <a href="{{ url_for('posts.posts_detail',pid=row.id) }}" target="_blank">查看</a>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+    </p>
+    <br>
+    <p>
+    <form action="{{ url_for("owncenter.add_category") }}" method="post">
+        {{ form.csrf_token }}
+        {{ form.add_categories.label() }}
+        {{ form.add_categories(class='form-control') }}
+        {% for err in form.add_categories.errors %}
+            <p style="color:red;">{{ err }}</p>
+        {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-success">添加</button>
+    </form>
+    </p>
+       <br>
+    <p>
+    <form action="{{ url_for("owncenter.del_category") }}" method="post">
+        {{ form.csrf_token }}
+
+        {{ form.categories.label() }}
+        {{ form.categories(class='form-control') }}
+        {% for err in form.categories.errors %}
+            <p style="color:red;">{{ err }}</p>
+        {% endfor %}
+        <br/>
+        <button type="submit" class="btn btn-success">删除</button>
+    </form>
+    </p>
+{% endblock %}
+{% block page_right %}
+{% endblock %}

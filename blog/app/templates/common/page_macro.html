@@ -1,0 +1,21 @@
+{% macro page(pagination,endPoint) %}
+            <ul class="pagination">
+            <li><a href="{{ url_for(endPoint,page=1) }}">首页</a></li>
+                <li {% if not pagination.has_prev %}class="disabled"{% endif %}>
+                    <a {% if pagination.has_prev %}href="{{ url_for(endPoint,page=pagination.prev_num,**kwargs) }}"{% endif %} aria-label="Previous">
+                        <span aria-hidden="true">上一页</span>
+                    </a>
+                </li>
+                {% for p in pagination.iter_pages() %}
+                    <li {% if p==pagination.page %}class="active"{% endif %}><a href="{{ url_for(endPoint,page=p,**kwargs) }}">{{ p }}</a></li>
+                {% endfor %}
+                <li {% if not pagination.has_next %}class="disabled"{% endif %}>
+                    <a {% if pagination.has_next %}href="{{ url_for(endPoint,page=pagination.next_num,**kwargs) }}"{% endif %} aria-label="Next">
+                        <span aria-hidden="true">下一页</span>
+                    </a>
+                </li>
+            <li><a href="{{ url_for(endPoint,page=pagination.pages) }}">尾页</a></li>
+
+            </ul>
+{% endmacro %}
+

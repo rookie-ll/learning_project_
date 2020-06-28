@@ -1,0 +1,236 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    博客详情...
+{% endblock %}
+{% block page_left %}
+    <div class="row">
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" style="padding: 0px 10px">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 article-detail">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 title">
+                {{ posts.title }}
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 favorite">
+                <label class="collections">
+                    <p onclick="doFavorite({{ posts.id }})" style="cursor:pointer;" id="collections">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.is_favorite(posts.id) %}
+                                取消收藏
+                            {% else %}
+                                收藏本文
+                            {% endif %}
+                        {% else %}
+                            收藏本文
+                        {% endif %}
+                    </p>
+                </label>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 info">
+                作者：{{ posts.user.username }}&nbsp;&nbsp;&nbsp;类别：{{ posts.categories.name }}&nbsp;&nbsp;&nbsp;
+                发表于：{{ moment(posts.timestamp).format('YYYY-MM-DD H:m:s') }}&nbsp;&nbsp;&nbsp;
+                阅读：{{ posts.visit }} 次&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 content" id="content">
+                {{ posts.article|safe }}
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8" style="margin: 20px 0px; text-align: center;">
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 favorite" style="margin: 20px 0px;">
+                {#                <label class="collections" onclick="doFavorite({{ posts.id }})" style="color: rgb(51, 122, 183);">#}
+                {#                  #}
+                {#                </label>#}
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 article-nav">
+            <div>上一篇：
+                <a href="" style="color: #000;">访谈:从电商专业转入Web前端，这位应届生的入职年薪20W！</a>
+            </div>
+            <div>下一篇：
+                <a href="" style="color: #000;">资讯:PBET-7.0版课程详解之UI全链路设计！</a>
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 article-comment" id="commenttop">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 add-comment">
+                <div class="page-header" style="clear: both;"><h3>发表评论</h3></div>
+                <form action="{{ url_for('posts.comment') }}" method="post">
+                    {{ form.csrf_token }}
+                    <input type="hidden" name="pid" value="{{ posts.id }}">
+                    {{ form.content(class="form-control",style="height:200px;resize:none;",placeholder='请输入评论内容在5～100字之间',required='true',minlength=5,maxlength=100) }}
+                    <br>
+                    <button class="btn btn-success">发表评论</button>
+                </form>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="commnetList">
+                    {# 下面是评论内的显示和发表评论的代码#}
+                    <div class="page-header" style="clear: both;"><h3>评论内容</h3></div>
+                    {#评论和回复内容的显示#}
+                    {% for message in comment.items %}
+                        {% if not message.replied_id %}
+                            <div class="media">
+                                <div class="media">
+                                    <div class="media-left media-middle">
+                                        <a href="#">
+                                            <img class="media-object"
+                                                 src="{{ url_for('static',filename='upload/m_'+message.user.icon,_external=True) }}"
+                                                 alt="..." width="50"
+                                                 style="border-radius: 5px;border-top:2px solid #ccc;border-right:2px solid #ccc;">
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">
+                                            {{ message.user.username }}
+                                            <span style="float:right;font-size:14px;">{{ moment(message.timestamp).format('YYYY-MM-DD H:m:s') }} <button
+                                                    class="btn btn-danger btn-xs"
+                                                    onclick="replay({{ message.id }});">回复</button> </span></h4>
+                                        <p>{{ message.count }}</p>
+                                    </div>
+                                </div>
+                                {% for reply in message.replies %}
+                                    <div class="media" style="margin-left: 20px">
+                                        <div class="media-left media-middle">
+                                            <a href="#">
+                                                <img class="media-object"
+                                                     src="{{ url_for('static',filename='upload/m_'+message.user.icon,_external=True) }}"
+                                                     alt="..." width="50"
+                                                     style="border-radius: 5px;border-top:2px solid #ccc;border-right:2px solid #ccc;">
+                                            </a>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading">
+                                                {{ reply.user.username }} 回复了 {{ message.user.username }}
+                                                <span style="float:right;font-size:14px;">{{ moment(reply.timestamp).format('YYYY-MM-DD H:m:s') }} <button
+                                                        class="btn btn-danger btn-xs"
+                                                        onclick="replay({{ reply.id }});">回复</button> </span></h4>
+                                            <p>{{ reply.count }}</p>
+                                        </div>
+                                    </div>
+                                    {% for r_reply in reply.replies %}
+                                        <div class="media" style="margin-left: 20px">
+                                            <div class="media-left media-middle">
+                                                <a href="#">
+                                                    <img class="media-object"
+                                                         src="{{ url_for('static',filename='upload/m_'+message.user.icon,_external=True) }}"
+                                                         alt="..." width="50"
+                                                         style="border-radius: 5px;border-top:2px solid #ccc;border-right:2px solid #ccc;">
+                                                </a>
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading">
+
+                                                    {{ r_reply.user.username }} 回复了 {{ reply.user.username }}
+
+                                                    <span style="float:right;font-size:14px;">{{ moment(message.timestamp).format('YYYY-MM-DD H:m:s') }} <button
+                                                            class="btn btn-danger btn-xs"
+                                                            onclick="replay({{ r_reply.id }});">回复</button> </span></h4>
+                                                <p>{{ r_reply.count }}</p>
+                                            </div>
+                                        </div>
+                                        <form action="{{ url_for('posts.reply') }}" method="post" class="replay"
+                                              id="replay{{ r_reply.id|string }}">
+                                            {{ form.csrf_token }}
+                                            <input type="hidden" name="pid" value="{{ posts.id }}">
+                                            <input type="hidden" name="rid" value="{{ r_reply.id }}">
+                                            {{ form.content(class="form-control",style="height:100px;resize:none;",placeholder='请输入回复message内容在5～100字之间',required='true',minlength=5,maxlength=100) }}
+                                            <br>
+                                            <button class="btn btn-danger">发表回复</button>
+                                        </form>
+                                    {% endfor %}
+                                    <form action="{{ url_for('posts.reply') }}" method="post" class="replay"
+                                          id="replay{{ reply.id|string }}">
+                                        {{ form.csrf_token }}
+                                        <input type="hidden" name="pid" value="{{ posts.id }}">
+                                        <input type="hidden" name="rid" value="{{ reply.id }}">
+                                        {{ form.content(class="form-control",style="height:100px;resize:none;",placeholder='请输入回复replay内容在5～100字之间',required='true',minlength=5,maxlength=100) }}
+                                        <br>
+                                        <button class="btn btn-danger">发表回复</button>
+                                    </form>
+                                {% endfor %}
+
+                            </div>
+                            <form action="{{ url_for('posts.reply') }}" method="post" class="replay"
+                                  id="replay{{ message.id|string }}">
+                                {{ form.csrf_token }}
+                                <input type="hidden" name="pid" value="{{ posts.id }}">
+                                <input type="hidden" name="rid" value="{{ message.id }}">
+                                {{ form.content(class="form-control",style="height:100px;resize:none;",placeholder='请输入回复message内容在5～100字之间',required='true',minlength=5,maxlength=100) }}
+                                <br>
+                                <button class="btn btn-danger">发表回复</button>
+                            </form>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-bottom: 20px;">
+                    {#  分页的样式  #}
+                    {% from 'common/page_macro.html' import page %}
+                    {{ page(comment,'posts.posts_detail',pid=posts.id) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            $('.replay').hide();
+        });
+
+        //点击回复的js的函数
+        function replay(pid) {
+            $('.replay').hide();
+            $('#replay' + pid).show()
+        }
+
+        //处理博客收藏功能的函数
+        function doFavorite(pid) {
+            //获取收藏的节点标签
+            var collections = $('#collections');
+            var html = collections.html();
+            console.log(html);
+            $.get({{ url_for('posts.do_favorite') }}, {'pid': pid}, function (data, status) {
+                if (data.res == 200) {
+                    if (html == '收藏本文') {
+                        collections.html("取消收藏");
+                    } else {
+                        collections.html("收藏本文")
+                    }
+                } else if (window.confirm('您还没有登录？是否前去登录？')) {
+                    window.location.href = '{{ url_for('user.login',_external=True) }}';
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            var fixedDiv = document.getElementById("fixedmenu");
+            var H = 0;
+            var Y = fixedDiv;
+            while (Y) {
+                H += Y.offsetTop;
+                Y = Y.offsetParent;
+            }
+
+            window.onscroll = function () {
+                var s = document.body.scrollTop || document.documentElement.scrollTop;
+                s += 90;
+                if (s > H) {
+                    fixedDiv.style = "position:fixed; top:90px; margin-top:0px; width: 280px;";
+                } else {
+                    fixedDiv.style = "";
+                }
+            }
+        });
+
+        function doArticleSearch() {
+            var keyword = $.trim($("#keyword").val());
+            if (keyword.length < 2) {
+                layer.msg("请输入至少两个关键字。", function () {
+                    //关闭后的操作
+                });
+                $("#keyword").focus();
+                return;
+            }
+            location.href = "/note/search/" + keyword;
+        }
+    </script>
+{% endblock %}

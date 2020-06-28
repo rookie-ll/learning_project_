@@ -1,0 +1,14 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    头像上传
+{% endblock %}
+{% from 'bootstrap/wtf.html' import quick_form %}
+{% block page_content %}
+<h2 class="page-header">头像上传</h2>
+    <img src="{{ url_for('static',filename='upload/m_'+current_user.icon) }}" alt="" width="200" style="border-radius:10px;">
+    <hr>
+    {{ quick_form(form) }}
+{% endblock %}
+{% block page_right %}
+{% endblock %}
+

@@ -1,0 +1,59 @@
+{% extends 'common/base.html' %}
+{% block title %}
+    收藏管理
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+    <style>
+    td a{
+        color:#000000;
+    }
+    </style>
+{% endblock %}
+{% block page_content %}
+    <h2 class="page-header">收藏管理</h2>
+    <form class="form-inline definewidth m20" action="index.html" method="get">
+        博客名称：
+        <input type="text" name="username" id="username" class="abc input-default" placeholder="" value="">&nbsp;&nbsp;
+        <button type="submit" class="btn btn-primary">查询</button>
+        &nbsp;&nbsp;
+        <button type="button" class="btn btn-success" id="addnew" onclick="window.location.href={{ url_for('posts.send_posts') }}">新增博客</button>
+    </form>
+    <table class="table table-bordered table-hover definewidth m10">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>标题</th>
+            <th>博客内容</th>
+            <th>浏览量</th>
+            <th>是否所有人可见</th>
+            <th>发表时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        {% for row in posts %}
+        <tr>
+            <td>{{ loop.revindex }}</td>
+            <td>{{ row.title }}</td>
+            <td>{{ row.article|striptags|showEllipsis(20) }}</td>
+            <td>{{ row.visit }}次</td>
+            <td>
+                {% if row.state %}
+                    仅自己可见
+                {% else %}
+                    所有人可见
+                {% endif %}
+            </td>
+            <td>{{ moment(row.timestamp).format('YYYY-MM-DD H:m:s') }}</td>
+            <td>
+                <a href="{{ url_for('owncenter.del_favorites',pid=row.id) }}">取消收藏</a> |
+                <a href="{{ url_for('posts.posts_detail',pid=row.id) }}" target="_blank">查看</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+{% endblock %}
+{% block page_right %}
+{% endblock %}
